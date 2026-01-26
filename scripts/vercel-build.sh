@@ -6,7 +6,7 @@ echo "=== VERCEL BUILD - PRODUCTION ==="
 
 # Install dependencies
 echo "Installing dependencies..."
-pip3 install -r requirements.txt
+uv pip install --system -r requirements.txt
 
 # Create minimal mkdocs wrapper for mike to find
 echo "Creating minimal mkdocs wrapper for mike..."
