@@ -1,0 +1,34 @@
+CHANGELOG - Rocky Linux Documentation Build System
+===================================================
+
+2026-01-26
+----------
+Fixed Vercel build failures caused by Vercel's migration to uv package manager.
+
+Changes:
+- vercel.json: Removed pip3 install from installCommand (now handled in build script)
+- scripts/vercel-build.sh:
+  - Switched from pip3 to uv with proper virtual environment setup
+  - Pinned Python to 3.12 for stability
+  - Removed mkdocs wrapper script (no longer needed with venv approach)
+  - Simplified mike commands to run directly from venv PATH
+- configs/mkdocs.yml: Disabled privacy plugin asset fetching to work around
+  SSL issues in Vercel's build environment
+
+Root cause: Vercel adopted uv as the default Python package manager in their
+build infrastructure (see Vercel changelog Oct 2025). This marked Python as
+"externally managed" per PEP 668, breaking direct pip install commands.
+
+
+2026-01-20 
+---------------------------------------------------
+Build system working with original pip3-based installation.
+
+Configuration at that time:
+- vercel.json: Used "pip3 install -r requirements.txt" for installCommand
+- scripts/vercel-build.sh: Used pip3 install with mkdocs wrapper script for mike
+- configs/mkdocs.yml: Privacy plugin enabled with default settings
+
+Note: Builds using Vercel CLI 50.4.5 and earlier worked without issues.
+Failures began appearing with CLI versions 50.4.9+ after Vercel's uv rollout
+reached the build infrastructure.
