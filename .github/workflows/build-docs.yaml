@@ -21,8 +21,17 @@ jobs:
           run: |
             aws s3 sync site/ s3://${{ secrets.S3_BUCKET }}/ \
               --delete \
-              --cache-control "public, max-age=3600"
+              --cache-control "public, max-age=604800"
           env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_REGION: ${{ vars.AWS_REGION }}
+
+        - name: Soft purge Fastly cache
+          run: |
+            curl -X POST \
+              "https://api.fastly.com/service/${{ secrets.FASTLY_SERVICE_ID }}/purge" \
+              -H "Fastly-Key: ${{ secrets.FASTLY_API_TOKEN }}" \
+              -H "Fastly-Soft-Purge: 1" \
+              -H "Surrogate-Key: all" \
+              -H "Accept: application/json"
